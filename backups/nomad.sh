@@ -15,7 +15,11 @@ if [[ `hostname` =~ $cluster_leader ]]; then
     rsync $backup_file rsync://woodlandpark.brickyard.whitestar.systems:873/raft-backups/nomad.snap
 
     rm $backup_file
-echo "Done!"
+
+    echo nomad_raft_backup_completed $(date +%s) > /var/lib/node_exporter/nomad_backup.prom.$$
+    mv /var/lib/node_exporter/nomad_backup.prom.$$ /var/lib/node_exporter/nomad_backup.prom
+
+    echo "Done!"
 else
     echo "Skipping backup as $cluster_leader is the leader"
 fi
