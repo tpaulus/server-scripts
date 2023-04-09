@@ -9,10 +9,10 @@ if [[ `hostname` =~ $cluster_leader ]]; then
     backup_file="/tmp/nomad-$(date +%s).snap"
 
     echo "Executing Nomad Snapshot"
-    nomad operator snapshot save $backup_file
+    /usr/local/bin/nomad operator snapshot save $backup_file
 
     echo "Uploading Snapshot to NAS"
-    rsync $backup_file rsync://woodlandpark.brickyard.whitestar.systems:873/raft-backups/nomad.snap
+    /usr/bin/rsync $backup_file rsync://woodlandpark.brickyard.whitestar.systems:873/raft-backups/nomad.snap
 
     rm $backup_file
 
