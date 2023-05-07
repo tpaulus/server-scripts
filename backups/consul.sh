@@ -9,7 +9,7 @@ if [[ `hostname` == $cluster_leader ]]; then
     backup_file=$(mktemp)
 
     echo "Executing Consul Snapshot"
-    /usr/local/bin/consul snapshot save $backup_file
+    /usr/bin/consul snapshot save $backup_file
 
     echo "Uploading Snapshot to NAS"
     /usr/bin/rsync $backup_file rsync://woodlandpark.brickyard.whitestar.systems:873/raft-backups/consul.snap
