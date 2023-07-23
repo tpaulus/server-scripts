@@ -18,7 +18,7 @@ if [[ `hostname` =~ $cluster_leader ]]; then
     sudo mount -t nfs woodlandpark.brickyard.whitestar.systems:/mnt/tank/Server\ Backups/Raft\ Backups/ ${mount_dir}
     cp "${backup_file}" "${mount_dir}/nomad.snap"
     umount "${mount_dir}"
-    rm "${mount_dir}"
+    rmdir "${mount_dir}"
 
     rm "${backup_file}"
 
