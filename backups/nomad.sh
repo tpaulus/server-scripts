@@ -9,12 +9,18 @@ if [[ `hostname` =~ $cluster_leader ]]; then
     backup_file="/tmp/nomad-$(date +%s).snap"
 
     echo "Executing Nomad Snapshot"
-    /usr/bin/nomad operator snapshot save $backup_file
+    /usr/bin/nomad operator snapshot save "${backup_file}"
 
     echo "Uploading Snapshot to NAS"
-    /usr/bin/rsync $backup_file rsync://woodlandpark.brickyard.whitestar.systems:873/raft-backups/nomad.snap
+    mount_dir=$(mktemp -d)
 
-    rm $backup_file
+    # Because this script is run as root, the NFS server maps the user to nobody. Ensure that the Share permissions are nobody:operator to allow write access
+    sudo mount -t nfs woodlandpark.brickyard.whitestar.systems:/mnt/tank/Server\ Backups/Raft\ Backups/ ${mount_dir}
+    cp "${backup_file}" "${mount_dir}/nomad.snap"
+    umount "${mount_dir}"
+    rm "${mount_dir}"
+
+    rm "${backup_file}"
 
     echo nomad_raft_backup_completed $(date +%s) > /var/lib/node_exporter/nomad_backup.prom.$$
     mv /var/lib/node_exporter/nomad_backup.prom.$$ /var/lib/node_exporter/nomad_backup.prom
